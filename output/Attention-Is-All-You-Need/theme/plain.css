@@ -1,0 +1,7 @@
+:root {
+    --qd-background-color: white;
+}
+
+table, td, th {
+    border-color: black;
+}
