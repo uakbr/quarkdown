@@ -1,0 +1,98 @@
+.docname {Attention Is All You Need}
+.docauthor {Ashish Vaswani, Noam Shazeer, Niki Parmar, Jakob Uszkoreit, Llion Jones, Aidan N. Gomez, Łukasz Kaiser, Illia Polosukhin}
+.doctype {paged}
+.theme {paperwhite} layout:{latex}
+.pageformat {A4}
+.doclang {English}
+.include {paper}
+
+<!-- Clear default headers/footers for academic paper style -->
+.pagemargin {topleft} {}
+.pagemargin {topright} {}
+.pagemargin {bottomleft} {}
+.pagemargin {bottomright} {}
+
+.center
+    #! .docname
+
+.whitespace height:{1cm}
+
+<!-- Authors layout with better structure -->
+.center
+    .grid columns:{3} gap:{1.5cm} alignment:{center}
+        .column
+            **Ashish Vaswani***  
+            _Google Brain_  
+            `avaswani@google.com`
+            
+        .column
+            **Noam Shazeer***  
+            _Google Brain_  
+            `noam@google.com`
+            
+        .column
+            **Niki Parmar***  
+            _Google Research_  
+            `nikip@google.com`
+
+    .whitespace height:{0.5cm}
+    
+    .grid columns:{3} gap:{1.5cm} alignment:{center}
+        .column
+            **Jakob Uszkoreit***  
+            _Google Research_  
+            `usz@google.com`
+            
+        .column
+            **Llion Jones***  
+            _Google Research_  
+            `llion@google.com`
+            
+        .column
+            **Aidan N. Gomez***†  
+            _University of Toronto_  
+            `aidan@cs.toronto.edu`
+
+    .whitespace height:{0.5cm}
+    
+    .grid columns:{2} gap:{3cm} alignment:{center}
+        .column
+            **Łukasz Kaiser***  
+            _Google Brain_  
+            `lukaszkaiser@google.com`
+            
+        .column
+            **Illia Polosukhin***‡  
+            `illia.polosukhin@gmail.com`
+
+.whitespace height:{1.5cm}
+
+<!-- Abstract section -->
+.abstract
+    The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-to-German translation task, improving over the existing best results, including ensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.0 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the best models from the literature.
+
+.whitespace height:{1cm}
+
+# 1 Introduction
+
+Recurrent neural networks, long short-term memory [12] and gated recurrent [7] neural networks in particular, have been firmly established as state of the art approaches in sequence modeling and transduction problems such as language modeling and machine translation [29, 2, 5]. Numerous efforts have since continued to push the boundaries of recurrent language models and encoder-decoder architectures [31, 21, 13].
+
+Recurrent models typically factor computation along the symbol positions of the input and output sequences. Aligning the positions to steps in computation time, they generate a sequence of hidden states $h_t$, as a function of the previous hidden state $h_{t-1}$ and the input for position $t$. This inherently sequential nature precludes parallelization within training examples, which becomes critical at longer sequence lengths, as memory constraints limit batching across examples. Recent work has achieved significant improvements in computational efficiency through factorization tricks [18] and conditional computation [26], while also improving model performance in case of the latter. The fundamental constraint of sequential computation, however, remains.
+
+Attention mechanisms have become an integral part of compelling sequence modeling and transduction models in various tasks, allowing modeling of dependencies without regard to their distance in the input or output sequences [2, 16]. In all but a few cases [22], however, such attention mechanisms are used in conjunction with a recurrent network.
+
+In this work we propose the Transformer, a model architecture eschewing recurrence and instead relying entirely on an attention mechanism to draw global dependencies between input and output. The Transformer allows for significantly more parallelization and can reach a new state of the art in translation quality after being trained for as little as twelve hours on eight P100 GPUs.
+
+.whitespace height:{2cm}
+
+<!-- Footnotes section -->
+.container textalignment:{left}
+    .text {***Equal contribution. Listing order is random. Jakob proposed replacing RNNs with self-attention and started the effort to evaluate this idea. Ashish, with Illia, designed and implemented the first Transformer models and has been crucially involved in every aspect of this work. Noam proposed scaled dot-product attention, multi-head attention and the parameter-free position representation and became the other person involved in nearly every detail. Niki designed, implemented, tuned and evaluated countless model variants in our original codebase and tensor2tensor. Llion also experimented with novel model variants, was responsible for our initial codebase, and efficient inference and visualizations. Lukasz and Aidan spent countless long days designing various parts of and implementing tensor2tensor, replacing our earlier codebase, greatly improving results and massively accelerating our research.**} size:{tiny}
+    
+    .whitespace height:{0.3cm}
+    
+    .text {**†Work performed while at Google Brain.**} size:{tiny}
+    
+    .whitespace height:{0.1cm}
+    
+    .text {**‡Work performed while at Google Research.**} size:{tiny} 

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<!--suppress ALL -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attention Is All You Need</title>
+    <script src="script/script.js"></script>
+    <script>window.PagedConfig = {auto: false};</script>
+    <script src="https://unpkg.com/pagedjs/dist/paged.polyfill.js"></script>
+    <script src="script/paged.js"></script>
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link rel="stylesheet" href="theme/theme.css">
+    <script>
+        doc = new PagedDocument();
+        doc.prepare();
+    </script>
+
+    <style>
+        body {
+        }
+
+        .page-break {
+            break-before: always;
+        }
+
+        body.quarkdown-plain {
+        }
+
+        body.quarkdown-slides .reveal {
+            width: 210.0mm;
+            height: 297.0mm;
+        }
+
+        @page {
+            size: 210.0mm 297.0mm;
+        }
+
+        p {
+        }
+    </style>
+</head>
+<body class="quarkdown quarkdown-paged">
+<div class="page-margin-content page-margin-top-left"></div><div class="page-margin-content page-margin-top-right"></div><div class="page-margin-content page-margin-bottom-left"></div><div class="page-margin-content page-margin-bottom-right"></div><div class="container fullwidth" style="justify-items: center; text-align: center;"><h1 id="attention-is-all-you-need">Attention Is All You Need</h1></div><div style="height: 1.0cm;"></div><div class="container fullwidth" style="justify-items: center; text-align: center;"><div style="grid-template-columns: auto auto auto; justify-content: center; align-items: center; gap: 1.5cm;" class="stack stack-grid"><div style="justify-content: flex-start; align-items: center;" class="stack stack-column"><p><strong>Ashish Vaswani</strong><br /><em>Google Brain</em><br /><span class="codespan-content"><code>avaswani@google.com</code></span></p></div><div style="justify-content: flex-start; align-items: center;" class="stack stack-column"><p><strong>Noam Shazeer</strong><br /><em>Google Brain</em><br /><span class="codespan-content"><code>noam@google.com</code></span></p></div><div style="justify-content: flex-start; align-items: center;" class="stack stack-column"><p><strong>Niki Parmar</strong><br /><em>Google Research</em><br /><span class="codespan-content"><code>nikip@google.com</code></span></p></div></div><div style="height: 0.5cm;"></div><div style="grid-template-columns: auto auto auto; justify-content: center; align-items: center; gap: 1.5cm;" class="stack stack-grid"><div style="justify-content: flex-start; align-items: center;" class="stack stack-column"><p><strong>Jakob Uszkoreit</strong><br /><em>Google Research</em><br /><span class="codespan-content"><code>usz@google.com</code></span></p></div><div style="justify-content: flex-start; align-items: center;" class="stack stack-column"><p><strong>Llion Jones</strong><br /><em>Google Research</em><br /><span class="codespan-content"><code>llion@google.com</code></span></p></div><div style="justify-content: flex-start; align-items: center;" class="stack stack-column"><p><strong>Aidan N. Gomez</strong>†<br /><em>University of Toronto</em><br /><span class="codespan-content"><code>aidan@cs.toronto.edu</code></span></p></div></div><div style="height: 0.5cm;"></div><div style="grid-template-columns: auto auto; justify-content: center; align-items: center; gap: 3.0cm;" class="stack stack-grid"><div style="justify-content: flex-start; align-items: center;" class="stack stack-column"><p><strong>Łukasz Kaiser</strong><br /><em>Google Brain</em><br /><span class="codespan-content"><code>lukaszkaiser@google.com</code></span></p></div><div style="justify-content: flex-start; align-items: center;" class="stack stack-column"><p><strong>Illia Polosukhin</strong>‡<br /><span class="codespan-content"><code>illia.polosukhin@gmail.com</code></span></p></div></div></div><div style="height: 1.5cm;"></div><div class="container fullwidth" style="padding: 0.0px 1.0cm 0.0px 1.0cm;"><div class="container fullwidth" style="justify-items: center; text-align: center;"><h4 id="abstract">Abstract</h4></div><div class="container" style="padding: 2.0mm 0.0px 2.0mm 0.0px;"><p>The dominant sequence transduction models are based on complex recurrent or convolutional neural networks that include an encoder and a decoder. The best performing models also connect the encoder and decoder through an attention mechanism. We propose a new simple network architecture, the Transformer, based solely on attention mechanisms, dispensing with recurrence and convolutions entirely. Experiments on two machine translation tasks show these models to be superior in quality while being more parallelizable and requiring significantly less time to train. Our model achieves 28.4 BLEU on the WMT 2014 English-to-German translation task, improving over the existing best results, including ensembles, by over 2 BLEU. On the WMT 2014 English-to-French translation task, our model establishes a new single-model state-of-the-art BLEU score of 41.0 after training for 3.5 days on eight GPUs, a small fraction of the training costs of the best models from the literature.</p></div></div><span>&nbsp;</span><div style="height: 1.0cm;"></div><div class="page-break" data-hidden=""></div><h1 id="1-introduction" data-location="1">1 Introduction</h1><p>Recurrent neural networks, long short-term memory [12] and gated recurrent [7] neural networks in particular, have been firmly established as state of the art approaches in sequence modeling and transduction problems such as language modeling and machine translation [29, 2, 5]. Numerous efforts have since continued to push the boundaries of recurrent language models and encoder-decoder architectures [31, 21, 13].</p><p>Recurrent models typically factor computation along the symbol positions of the input and output sequences. Aligning the positions to steps in computation time, they generate a sequence of hidden states $h_t$, as a function of the previous hidden state $h_{t-1}$ and the input for position $t$. This inherently sequential nature precludes parallelization within training examples, which becomes critical at longer sequence lengths, as memory constraints limit batching across examples. Recent work has achieved significant improvements in computational efficiency through factorization tricks [18] and conditional computation [26], while also improving model performance in case of the latter. The fundamental constraint of sequential computation, however, remains.</p><p>Attention mechanisms have become an integral part of compelling sequence modeling and transduction models in various tasks, allowing modeling of dependencies without regard to their distance in the input or output sequences [2, 16]. In all but a few cases [22], however, such attention mechanisms are used in conjunction with a recurrent network.</p><p>In this work we propose the Transformer, a model architecture eschewing recurrence and instead relying entirely on an attention mechanism to draw global dependencies between input and output. The Transformer allows for significantly more parallelization and can reach a new state of the art in translation quality after being trained for as little as twelve hours on eight P100 GPUs.</p><div style="height: 2.0cm;"></div><div class="box error"><header><h4>Error: container</h4></header><div class="box-content"><p>Cannot call function container<span class="inline-collapse" data-full-text="(optional Size width, optional Size height, optional Boolean fullwidth, optional Color foreground, optional Color background, optional Color border, optional Sizes borderwidth, optional BorderStyle borderstyle, optional Sizes margin, optional Sizes padding, optional Sizes radius, optional Alignment alignment, optional TextAlignment textalignment, optional FloatAlignment float, optional MarkdownContent body)" data-collapsed-text="(...)" data-collapsed="true">(...)</span> with arguments <span class="inline-collapse" data-full-text="(left, .text {***Equal contribution. Listing order is random. Jakob proposed replacing RNNs with self-attention and started the effort to evaluate this idea. Ashish, with Illia, designed and implemented the first Transformer models and has been crucially involved in every aspect of this work. Noam proposed scaled dot-product attention, multi-head attention and the parameter-free position representation and became the other person involved in nearly every detail. Niki designed, implemented, tuned and evaluated countless model variants in our original codebase and tensor2tensor. Llion also experimented with novel model variants, was responsible for our initial codebase, and efficient inference and visualizations. Lukasz and Aidan spent countless long days designing various parts of and implementing tensor2tensor, replacing our earlier codebase, greatly improving results and massively accelerating our research.**} size:{tiny}
+
+.whitespace height:{0.3cm}
+
+.text {**†Work performed while at Google Brain.**} size:{tiny}
+
+.whitespace height:{0.1cm}
+
+.text {**‡Work performed while at Google Research.**} size:{tiny})" data-collapsed-text="(...)" data-collapsed="true">(...)</span>: <br /><em>No such element 'left' among values [start, center, end, justify]</em></p></div></div>
+<script src="script/websockets.js"></script>
+<script>startWebSockets("localhost:8089")</script>
+</body>
+</html>
